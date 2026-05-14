@@ -1,0 +1,165 @@
+/* 1. Contenedor Principal (Centrado total) */
+.main-wrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fffaf5; /* Crema suave */
+  background-image: radial-gradient(#ff8c0011 1px, transparent 1px);
+  background-size: 20px 20px;
+  padding: 40px 20px;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 2. La 'Tabla' o Card de Registro */
+.card-registro {
+  background: white;
+  padding: 50px 60px; /* Amplitud interna */
+  border-radius: 40px;
+  width: 100%;
+  box-shadow: 0 20px 40px rgba(255, 140, 0, 0.1);
+  border: 1px solid #ffe4cc;
+  text-align: center;
+}
+
+/* 3. Títulos y Textos */
+h1 {
+  color: #ff8c00;
+  font-size: 2.3rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.welcome-text {
+  color: #888;
+  margin-bottom: 40px;
+  font-size: 16px;
+}
+
+/* 4. Sistema de Rejilla (Dos Columnas) */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Divide en dos partes iguales */
+  gap: 20px; /* Espacio entre campos */
+}
+
+.full-width {
+  grid-column: span 2; /* Ocupa las dos columnas */
+}
+
+/* 5. Subtítulos de Sección */
+.section-title {
+  color: #ff8c00;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 25px 0 10px;
+  text-align: left;
+  border-bottom: 1px solid #fff0e0;
+  padding-bottom: 8px;
+}
+
+/* 6. Campos de Entrada (Inputs) */
+.form-field {
+  text-align: left;
+}
+
+.form-field label {
+  display: block;
+  font-weight: 600;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.input-wrapper {
+  background: #fdfdfd;
+  border: 2px solid #eee;
+  border-radius: 15px;
+  padding: 5px 15px;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.3s;
+}
+
+.input-wrapper:focus-within {
+  border-color: #ff8c00;
+}
+
+.input-wrapper input, .input-wrapper select {
+  border: none;
+  background: transparent;
+  width: 100%;
+  padding: 12px 5px;
+  outline: none;
+  font-size: 15px;
+  color: #333;
+}
+
+.input-group-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+.select-wrapper {
+    flex: 1; /* Ocupa menos espacio */
+}
+
+.number-wrapper {
+    flex: 3; /* El número de documento es más ancho */
+}
+
+/* Estilo para que el select se vea igual que tus inputs */
+select {
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* 7. Botón Principal */
+.btn-submit {
+  background: linear-gradient(135deg, #ff8c00 0%, #e67e00 100%);
+  color: white;
+  border: none;
+  padding: 18px;
+  border-radius: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 25px;
+  box-shadow: 0 10px 20px rgba(230, 126, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.btn-submit:hover {
+  transform: translateY(-2px);
+}
+
+.form-footer {
+  margin-top: 30px;
+  color: #888;
+}
+
+.form-footer a {
+  color: #ff8c00;
+  text-decoration: none;
+}
+
+.secure-tag {
+  background: #f0fdf4; /* Verde suave */
+  border: 1px dashed #22c55e;
+  padding: 15px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #166534;
+  font-size: 13px;
+  margin-top: 25px;
+}

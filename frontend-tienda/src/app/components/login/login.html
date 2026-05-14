@@ -1,0 +1,65 @@
+<div class="main-wrapper">
+  <div class="login-card">
+    
+    <div class="header-section">
+      <div class="icon-container">
+        <span class="shop-icon">🏪</span>
+      </div>
+      <h1 class="main-title">¡La Tienda de Mi Barrio!</h1>
+      <p class="welcome-text">¡Hola vecino! Qué bueno verte de nuevo.</p>
+    </div>
+
+    <div *ngIf="!mostrarRecuperar">
+      <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="login-form">
+        <div class="form-field">
+          <label>Correo electrónico</label>
+          <div class="input-wrapper">
+            <span class="field-icon">✉️</span>
+            <input type="email" name="email" [(ngModel)]="credenciales.email" required placeholder="tu@correo.com">
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label>Tu contraseña</label>
+          <div class="input-wrapper">
+            <span class="field-icon">🔒</span>
+            <input [type]="verPassword ? 'text' : 'password'" name="password" [(ngModel)]="credenciales.password" required>
+            <button type="button" class="eye-btn" (click)="verPassword = !verPassword">
+              {{ verPassword ? '👁️‍🗨️' : '👁️' }}
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-main">Entrar a la Tienda</button>
+      </form>
+
+      <div class="opciones-bajas">
+        <a (click)="toggleRecuperar()" class="link-secundario">¿Olvidaste tu contraseña?</a>
+        <p class="texto-pregunta">¿Eres nuevo?</p>
+        <a (click)="irARegistro()" class="link-resaltado">Crea tu cuenta vecina</a>
+      </div>
+    </div>
+
+    <div *ngIf="mostrarRecuperar">
+      <h2 class="sub-title">Recuperar Acceso</h2>
+      <p class="instrucciones">Ingresa tu correo y te ayudaremos a entrar de nuevo.</p>
+      
+      <form (ngSubmit)="enviarSolicitud()" class="login-form">
+        <div class="form-field">
+          <label>Correo de recuperación</label>
+          <div class="input-wrapper">
+            <span class="field-icon">✉️</span>
+            <input type="email" name="emailRecup" [(ngModel)]="emailRecuperacion" placeholder="Tu correo electrónico" required>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn-main">Enviar enlace</button>
+        
+        <div class="opciones-bajas">
+          <a (click)="toggleRecuperar()" class="link-secundario">Volver al Login</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

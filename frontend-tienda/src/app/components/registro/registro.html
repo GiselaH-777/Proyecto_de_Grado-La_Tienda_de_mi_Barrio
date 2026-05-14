@@ -1,0 +1,137 @@
+<div class="main-wrapper">
+  <div class="card-registro">
+    <h1>¡Únete a la vecindad!</h1>
+    <p class="welcome-text">Crea tu cuenta para empezar a comprar en tu barrio.</p>
+
+    <form class="form-grid" (ngSubmit)="registrar()">
+      
+      <div class="section-title full-width">Información Personal</div>
+
+      <div class="form-field full-width">
+        <label>Identificación 🪪</label>
+        <div class="input-group-row">
+        <!-- Selector de Tipo -->
+        <div class="input-wrapper select-wrapper">
+            <select [(ngModel)]="nuevoUsuario.tipo_documento" name="tipo_documento">
+                <option value="" disabled selected>Tipo</option>
+                <option value="CC">C.C.</option>
+                <option value="CE">C.E.</option>
+                <option value="PP">Pasaporte</option>
+          </select>
+        </div>
+
+        <!-- Input de Número -->
+        <div class="input-wrapper number-wrapper">
+            <input type="text" 
+                   placeholder="Número de documento" 
+                   [(ngModel)]="nuevoUsuario.documento" 
+                   name="documento"
+                   (input)="validarSoloNumeros($event)">
+        </div>
+    </div>
+</div>
+      
+      <div class="form-field">
+        <label>Nombre</label>
+        <div class="input-wrapper">
+          <input type="text" placeholder="Tu nombre" [(ngModel)]="nuevoUsuario.nombre" name="nombre">
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Apellido</label>
+        <div class="input-wrapper">
+          <input type="text" placeholder="Tu apellido" [(ngModel)]="nuevoUsuario.apellido" name="apellido">
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Email</label>
+        <div class="input-wrapper">
+          <input type="email" placeholder="ejemplo@correo.com" [(ngModel)]="nuevoUsuario.email" name="email">
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Teléfono</label>
+        <div class="input-wrapper">
+          <input type="text" placeholder="300 123 4567" [(ngModel)]="nuevoUsuario.telefono" name="telefono">
+        </div>
+      </div>
+
+      <div class="section-title full-width">Seguridad</div>
+      
+      <div class="form-field full-width">
+        <label>Contraseña</label>
+        <div class="input-wrapper">
+          <input 
+            [type]="verPassword ? 'text' : 'password'" 
+            placeholder="Crea una clave segura"
+            [(ngModel)]="nuevoUsuario.password"
+            name="password">
+          
+          <button type="button" class="eye-btn" (click)="verPassword = !verPassword">
+            {{ verPassword ? '👁️‍🗨️' : '👁️' }}
+          </button>
+        </div>
+      </div>
+
+      <div class="section-title full-width">Logística y Pagos</div>
+      
+      <div class="form-field full-width">
+        <label>¿Dónde te entregamos tus compras?</label>
+        <div class="input-wrapper">
+          <input type="text" placeholder="Dirección completa, barrio o conjunto" [(ngModel)]="nuevoUsuario.direccion" name="direccion">
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Número de cuenta</label>
+        <div class="input-wrapper">
+          <input type="text" placeholder="Cuenta para pagos/reembolsos" [(ngModel)]="nuevoUsuario.numero_cuenta" name="numero_cuenta">
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Mi Banco</label>
+        <div class="input-wrapper">
+          <select name="banco" [(ngModel)]="nuevoUsuario.banco">
+            <option value="" disabled selected>Selecciona tu banco</option>
+            <option value="bancolombia">Bancolombia</option>
+            <option value="davivienda">Davivienda</option>
+            <option value="banco_bogota">Banco de Bogotá</option>
+            <option value="Nequi">Nequi</option>
+            <option value="nu">Nu Bank</option>
+            <option value="otro">Otro / Billetera Digital</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Tipo de cuenta</label>
+        <div class="input-wrapper">
+          <select name="tipo_cuenta" [(ngModel)]="nuevoUsuario.tipo_cuenta">
+            <option value="" disabled selected>Selecciona una opción</option>
+            <option value="ahorros">Ahorros</option>
+            <option value="corriente">Corriente</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-field info-box">
+        <div class="secure-tag">
+          <span>🔒</span>
+          <p>Conexión segura para tus datos bancarios</p>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit full-width">
+        ¡Listo, quiero registrarme!
+      </button>
+    </form>
+
+    <div class="form-footer">
+      <p>¿Ya tienes cuenta? <a href="/login"><b>Inicia sesión aquí</b></a></p>
+    </div>
+  </div>
+</div>

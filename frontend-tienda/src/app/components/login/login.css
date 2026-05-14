@@ -1,0 +1,168 @@
+/* 1. Humanización: Fondo con textura sutil */
+.main-wrapper {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fffaf5; /* Crema suave */
+  background-image: radial-gradient(#ff8c0011 1px, transparent 1px);
+  background-size: 20px 20px;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+}
+
+/* 2. Jerarquía y Card Central */
+.login-card {
+  background: white;
+  padding: 50px 40px;
+  border-radius: 40px;
+  box-shadow: 0 20px 40px rgba(255, 140, 0, 0.1);
+  width: 100%;
+  text-align: center;
+  border: 1px solid #ffe4cc;
+  margin: auto;
+}
+
+.icon-container {
+  background: #fff0e0;
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  border-radius: 25px;
+  margin: 0 auto 20px;
+  font-size: 40px;
+}
+
+.main-title { 
+  color: #e67e00; /* Naranja quemado */
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+
+.sub-title {
+  color: #ff8c00;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.welcome-text, .instrucciones { 
+  color: #888; 
+  font-size: 15px; 
+  margin-bottom: 35px; 
+}
+
+/* 3. Inputs con bordes suaves e iconos */
+.form-field { 
+  text-align: left; 
+  margin-bottom: 25px; 
+}
+
+.form-field label { 
+  display: block; 
+  color: #555; 
+  font-weight: 600; 
+  font-size: 14px;
+  margin-bottom: 8px; 
+  margin-left: 5px;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #fdfdfd;
+  border: 2px solid #eee;
+  border-radius: 15px;
+  padding: 0 15px;
+  transition: all 0.3s;
+}
+
+.input-wrapper:focus-within {
+  border-color: #ff8c00;
+  box-shadow: 0 0 0 4px rgba(255, 140, 0, 0.1);
+}
+
+.input-wrapper input {
+  border: none;
+  background: transparent;
+  padding: 15px 10px;
+  width: 100%;
+  outline: none;
+  font-size: 16px;
+  flex: 1;
+  /* CORRECCIÓN: Evita las mayúsculas forzadas */
+  text-transform: none !important; 
+}
+
+.field-icon { font-size: 18px; opacity: 0.5; }
+
+/* 4. El Botón con degradado y sombra */
+.btn-main {
+  background: linear-gradient(135deg, #ff8c00 0%, #e67e00 100%);
+  color: white;
+  border: none;
+  padding: 18px;
+  width: 100%;
+  border-radius: 18px;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 8px 15px rgba(230, 126, 0, 0.3);
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 10px;
+}
+
+.btn-main:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(230, 126, 0, 0.4);
+}
+
+/* 5. Opciones bajas y enlaces */
+.opciones-bajas {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.link-secundario {
+  cursor: pointer;
+  color: #666;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  display: inline-block;
+}
+
+.link-resaltado {
+  cursor: pointer;
+  color: #ff8c00;
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-decoration: none;
+  display: block;
+  margin-top: 10px;
+}
+
+.texto-pregunta {
+  margin-top: 20px;
+  margin-bottom: 5px;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+/* 6. Botón de ojo para contraseña */
+.eye-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.2s;
+}
+
+.eye-btn:hover {
+  opacity: 0.7;
+}
+

@@ -1,0 +1,84 @@
+<nav class="sidebar" [class.collapsed]="isCollapsed">
+  <!-- HEADER: Potencia Visual -->
+  <div class="brand-container">
+    <div class="brand-logo">
+      <span class="logo-emoji">🏪</span>
+      <div class="brand-text" *ngIf="!isCollapsed">
+        <span class="brand-main">Mi Barrio</span>
+        <span class="brand-sub">Shop</span>
+      </div>
+    </div>
+    <button class="hamburger-btn" (click)="toggleSidebar()" [class.is-active]="!isCollapsed">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+
+  <!-- TARJETA DE PERFIL: El corazón del diseño -->
+  <div class="profile-card" *ngIf="!isCollapsed" (click)="irAModulo('perfil')">
+    <div class="avatar-section">
+      <div class="avatar-circle">
+        <span *ngIf="!usuario?.fotoUrl">{{ inicial }}</span>
+        <img *ngIf="usuario?.fotoUrl" [src]="usuario.fotoUrl">
+      </div>
+      <div class="edit-badge"><i class="fa-solid fa-pen"></i></div>
+    </div>
+    
+    <div class="profile-data">
+      <span class="welcome-msg">¡Hola, Vecino!</span>
+      <h2 class="client-name">{{ usuario?.nombre || 'Vecino' }}</h2>
+      <p class="client-email">{{ usuario?.correo }}</p>
+      <div class="status-pill">
+        <span class="dot"></span> Cliente Destacado
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVEGACIÓN: Botones con Aire y Estilo -->
+  <div class="nav-sections">
+    <div class="nav-group">
+      <span class="group-title" *ngIf="!isCollapsed">SECCIÓN PRINCIPAL</span>
+      <button class="nav-btn" (click)="irAModulo('inicio')" routerLinkActive="active">
+        <span class="btn-emoji">🏠</span>
+        <span class="btn-text" *ngIf="!isCollapsed">Inicio</span>
+      </button>
+      <button class="nav-btn" (click)="irAModulo('compras')">
+        <span class="btn-emoji">🛍️</span>
+        <span class="btn-text" *ngIf="!isCollapsed">Comprar ahora</span>
+      </button>
+    </div>
+
+    <div class="nav-group">
+      <span class="group-title" *ngIf="!isCollapsed">GESTIÓN DE DINERO</span>
+      <button class="nav-btn" (click)="irAModulo('pagos')">
+        <span class="btn-emoji">💳</span>
+        <span class="btn-text" *ngIf="!isCollapsed">Pagar aquí</span>
+      </button>
+      <button class="nav-btn" (click)="irAModulo('facturas')">
+        <span class="btn-emoji">📄</span>
+        <span class="btn-text" *ngIf="!isCollapsed">Mis Facturas</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="support-card" *ngIf="!isCollapsed">
+    <div class="support-content">
+      <p class="support-text">¿Necesitas ayuda, <strong>vecina</strong>?</p>
+      <a href="https://wa.me/tunumero" target="_blank" class="whatsapp-pill">
+        <span class="ws-icon">💬</span>
+        <span>WhatsApp</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- FOOTER: Botón de Salida -->
+<div class="sidebar-footer">
+  <div class="logout-action" (click)="cerrarSesion()" [class.collapsed-item]="isCollapsed">
+    <div class="logout-icon-wrapper">
+      <span class="btn-emoji">🚪</span>
+    </div>
+    <!-- El texto se elimina del DOM cuando el menú está cerrado -->
+    <span *ngIf="!isCollapsed" class="logout-label">Cerrar sesión</span>
+  </div>
+</div>

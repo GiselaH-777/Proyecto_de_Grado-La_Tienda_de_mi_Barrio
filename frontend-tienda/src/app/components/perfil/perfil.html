@@ -1,0 +1,211 @@
+<div class="perfil-premium-container">
+
+    <div class="panel-maestro-comunidad">
+
+        <!-- ==========================================
+             1. CABECERA Y AVATAR
+             ========================================== -->
+        <header class="header-vivo">
+            <div class="avatar-container">
+                <div class="avatar-mirror">
+                    <img [src]="imagenPreview" class="foto-vecino" *ngIf="imagenPreview">
+                    
+                    <div class="inicial-placeholder" *ngIf="!imagenPreview">
+                    {{ inicial }}
+                    </div>
+                </div>
+
+                <button class="btn-edit-photo" (click)="fileInput.click()">
+                    📷
+                </button>
+
+                <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" accept="image/*">
+                </div>
+            <div class="bienvenida-moderna">
+                <h1>¡Hola de nuevo, <span class="destaque-ambar">{{ usuario.nombre }}</span>! 👋</h1>
+                <p>Eres parte esencial de nuestra comunidad 🧡</p>
+            </div>
+        </header>
+
+        <div class="contenido-perfil">
+
+            <!-- ==========================================
+                 2. SECCIÓN: IDENTIDAD (BLOQUE SUPERIOR)
+                 ========================================== -->
+            <section class="card-elevada">
+                <div class="card-glass-header">
+                    <div class="titulo-con-icono">
+                        <span class="badge-purpura">🆔</span>
+                        <h3>Identidad del Vecino</h3>
+                    </div>
+                    <button class="btn-editar-premium" (click)="toggleIdentidad()">
+                        <span class="icono-lapiz">✏️</span>
+                        <span class="tooltip-text">Editar sección</span>
+                    </button>
+                </div>
+
+                <div class="id-master-group">
+                    <label>Número de Documento 🔑</label>
+                    <div class="id-monospaced-box">
+                        <span class="icon-3d">🪪</span>
+                        <input type="text" [value]="usuario?.documento" [disabled]="true" readonly class="font-mono">
+                    </div>
+                </div>
+
+                <div class="grid-nombres-apellidos">
+                    <div class="input-glow-group">
+                        <label>Nombres</label>
+                        <input type="text" [(ngModel)]="usuario.nombre" [disabled]="!editandoIdentidad" class="input-jugoso">
+                    </div>
+                    <div class="input-glow-group">
+                        <label>Apellidos</label>
+                        <input type="text" [(ngModel)]="usuario.apellido" [disabled]="!editandoIdentidad" class="input-jugoso">
+                    </div>
+                </div>
+
+                <div class="action-footer">
+                    <hr class="separador-premium">
+                    <button class="btn-actualizar" (click)="abrirModal()" >🔐 Actualizar Contraseña</button>
+
+                <div class="modal-overlay" *ngIf="mostrarModal">
+                    <div class="modal-card">
+                        <div class="modal-header">
+                        <h3>Seguridad del Vecino</h3>
+                        <button class="close-btn" (click)="cerrarModal()">&times;</button>
+                    </div> 
+                    
+                    <div class="modal-body">
+                        <p>Para proteger tu cuenta, verifica tu identidad.</p>
+
+                    <div class="form-group">
+                        <label>Contraseña Actual</label>
+                        <input type="password" [(ngModel)]="passwordActual" placeholder="Tu clave actual">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nueva Contraseña</label>
+                        <input type="password" [(ngModel)]="nuevaPassword" placeholder="Mínimo 6 caracteres">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Confirmar Nueva Contraseña</label>
+                        <input type="password" [(ngModel)]="confirmarPassword" placeholder="Repite la nueva clave">
+                    </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn-secundario" (click)="cerrarModal()">Cancelar</button>
+                        <button class="btn-primario" (click)="actualizarPassword()">Cambiar Clave</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+            <!-- ==========================================
+                 3. GRID INFERIOR (DOS COLUMNAS)
+                 ========================================== -->
+            <div class="grid-layout">
+
+                <!-- COLUMNA IZQUIERDA: CONTACTO -->
+                <section class="card-elevada">
+                    <div class="card-glass-header">
+                        <h3><span>📍</span> Contacto y Ubicación</h3>
+                        <button class="btn-editar-premium" (click)="toggleContacto()">
+                            <span class="icono-lapiz">✏️</span>
+                            <span class="tooltip-text">Editar sección</span>
+                        </button>
+                    </div>
+                    <div class="form-content">
+                        <div class="input-glow-group">
+                            <label>📩Correo electrónico</label>
+                            <input type="email" [(ngModel)]="usuario.email" [disabled]="!editandoContacto" class="input-jugoso">
+                        </div>
+                        <div class="input-glow-group">
+                            <div class="input-icon-wrapper">
+                                <label>📱Teléfono</label>
+                                <input type="tel" [(ngModel)]="usuario.telefono" [disabled]="!editandoContacto" placeholder="Tu celular" class="input-jugoso">
+                            </div>
+                        </div>
+                        <div class="input-glow-group">
+                            <div class="input-icon-wrapper">
+                                <label>🏠Dirección de entrega</label>
+                                <input type="text" [(ngModel)]="usuario.direccion" [disabled]="!editandoContacto" placeholder="Aún no has registrado tu domicilio, vecino..." class="input-jugoso placeholder-italic">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- COLUMNA DERECHA: CARTERA -->
+                <section class="card-elevada">
+                    <div class="card-glass-header">
+                        <h3><span>💳</span> Gestión y Cartera</h3>
+                        <button class="btn-editar-premium" (click)="toggleGestion()">
+                        <span class="icono-lapiz">✏️</span>
+                        <span class="tooltip-text">Editar sección</span>
+                        </button>
+                    </div>
+
+                    <div class="form-content">
+                        <div class="form-row-wide">
+                        
+                        <div class="input-glow-group">
+                            <label>Banco</label>
+                            <select class="input-jugoso" 
+                                    [(ngModel)]="usuario.banco" 
+                                    [disabled]="!editandoGestion"
+                                    name="banco">
+                            <option value="Bancolombia">Bancolombia</option>
+                            <option value="Nequi">Nequi</option>
+                            <option value="Daviplata">Daviplata</option>
+                            </select>
+                        </div>
+
+                        <div class="input-glow-group">
+                            <label>Tipo de Cuenta</label>
+                            <select class="input-jugoso" 
+                                    [(ngModel)]="usuario.tipo_cuenta" 
+                                    [disabled]="!editandoGestion"
+                                    name="tipo_cuenta">
+                            <option [ngValue]="usuario.tipo_cuenta" hidden>{{usuario.tipo_cuenta}}</option>
+                            <option value="Ahorros">Ahorros</option>
+                            <option value="Corriente">Corriente</option>
+                            </select>
+                        </div>
+
+                        </div>
+
+                        <div class="input-glow-group">
+                        <label>Número de Cuenta</label>
+                        <div class="input-password-wrapper">
+                            <input type="text" 
+                                class="input-jugoso" 
+                                [(ngModel)]="usuario.numero_cuenta" 
+                                [disabled]="!editandoGestion"
+                                name="numero_cuenta"
+                                placeholder="Ingresa tu número de cuenta">
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+            </div> <!-- CIERRE GRID-LAYOUT -->
+        </div> <!-- CIERRE CONTENIDO-PERFIL -->
+
+        <!-- ==========================================
+             4. FOOTER FINAL Y BOTÓN PRINCIPAL
+             ========================================== -->
+        <footer class="footer-final-maestro">
+            <button class="btn-principal-tactil" (click)="actualizarDatosVecino()">
+                <span class="shimmer"></span>
+                ✅ Actualizar los datos de vecino
+            </button>
+            <p class="sello-seguridad">
+                <span class="shield-icon">🛡️</span> 
+                Información protegida con estándares de alta seguridad
+            </p>
+        </footer>
+
+    </div> <!-- CIERRE DEL PANEL-MAESTRO-COMUNIDAD -->
+</div> <!-- CIERRE DEL PERFIL-PREMIUM-CONTAINER -->

@@ -1,0 +1,114 @@
+/* 1. VARIABLES Y CONFIGURACIÓN RAÍZ */
+:root {
+  --sidebar-width: 280px;
+  --sidebar-mini: 85px;
+  --transition-speed: 0.3s;
+  --bg-crema: #fffaf5; /* Para Login/Registro */
+  --bg-app: #f8fafc;   /* Para Perfil y contenido interno */
+}
+
+/* 2. RESET Y BASES */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-crema);
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+/* 3. ESTRUCTURA DE LA APLICACIÓN */
+.app-layout {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* 4. CONTENEDOR PRINCIPAL (MAIN) */
+main {
+  flex: 1;
+  min-width: 0; 
+  background-color: var(--bg-app);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra las tarjetas horizontalmente */
+  
+  /* Gestión de espacio para el Menú Lateral */
+  margin-left: var(--sidebar-width);
+  transition: margin-left var(--transition-speed) ease-in-out;
+  padding: 20px;
+}
+
+/* Ajuste de margen cuando el menú es mini */
+.app-layout.sidebar-is-collapsed main {
+  margin-left: var(--sidebar-mini);
+}
+
+/* 5. MODO FULL WIDTH (Login, Registro, Recuperación) */
+main.full-width {
+  margin-left: 0 !important;
+  background-color: var(--bg-crema) !important;
+  justify-content: center; /* Centrado vertical para el login */
+}
+
+/* --- CONTROL DE AMPLITUD POR TIPO DE TARJETA --- */
+
+/* 1. Login (La más angosta, como en tu imagen 2) */
+.card-login {
+  max-width: 700px !important;
+}
+
+/* 2. Recuperar Contraseña (Amplitud media, como en tu imagen 3) */
+.card-restablecer-password {
+  max-width: 650px !important; /* Un poco más ancha que el login */
+}
+
+/* 3. Registro (La más amplia, para que los campos dobles queden bien) */
+.card-registro {
+  max-width: 1500px !important; /* Amplitud extra para información personal y pagos */
+}
+
+/* 4. Perfil / Contenido Interno (Máxima amplitud) */
+.card-perfil {
+  max-width: 2000px !important;
+  width: 100%;
+}
+
+/* Aplicación técnica en el MAIN */
+main.full-width > * {
+  margin: auto;
+  display: block;
+}
+
+/* 7. RESPONSIVIDAD (CELULARES) */
+@media (max-width: 768px) {
+  main {
+    margin-left: 0 !important;
+    padding: 15px;
+  }
+
+  .sidebar {
+    position: fixed;
+    z-index: 1000;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+  }
+
+  /* Animación para esconder sidebar en móvil */
+  .sidebar.collapsed {
+    transform: translateX(-100%);
+    width: 260px;
+  }
+}
+
+/* Animación de entrada suave */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

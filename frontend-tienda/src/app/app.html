@@ -1,0 +1,10 @@
+<div class="app-layout" [class.sidebar-is-collapsed]="isCollapsed">
+  
+  <!-- SOLO muestra el sidebar si NO es login/registro -->
+  <app-sidebar *ngIf="shouldShowNavbar()" (toggleMenu)="isCollapsed = $any($event)"></app-sidebar>
+
+  <!-- Aplicamos la clase 'full-width' si el menú está oculto -->
+  <main [class.full-width]="!shouldShowNavbar()">
+    <router-outlet></router-outlet>
+  </main>
+</div>
