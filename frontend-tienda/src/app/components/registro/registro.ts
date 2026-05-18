@@ -2,13 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { FormsModule } from '@angular/forms'; 
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router'; // Para navegar
-import { AuthService } from '../../services/producto'; 
+import { Router, RouterModule } from '@angular/router'; // Para navegar
 
 @Component({
   selector: 'app-registro',
   standalone: true, 
-  imports: [CommonModule, FormsModule], 
+  imports: [CommonModule, FormsModule, RouterModule], 
   templateUrl: './registro.html',
   styleUrls: ['./registro.css']
 })
@@ -37,8 +36,7 @@ export class RegistroComponent {
   // LLAVE MAESTRA: Inyectamos todo lo necesario en el constructor
   constructor(
     private http: HttpClient, 
-    private router: Router, 
-    private auth: AuthService
+    private router: Router
   ) {}
 
   // --- Lógica de Registro con CANDADO DE SEGURIDAD ---

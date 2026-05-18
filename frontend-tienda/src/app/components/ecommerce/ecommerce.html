@@ -1,0 +1,121 @@
+<div class="tienda-container">
+  <div class="contenido-wrap">
+
+    <header class="mostrador-superior">
+      <div class="logo-area">
+        <span class="logo-icono">🏪</span>
+        <div>
+          <p class="tagline">Tu mercado de confianza</p>
+          <h1 class="logo-texto">Mi Barrio <span class="naranja">Shop</span></h1>
+        </div>
+      </div>
+
+      <div class="buscador-central">
+        <input 
+          type="text" 
+          placeholder="¿Qué te hace falta para la despensa hoy, vecino? 🔎" 
+          class="input-busqueda"
+          [(ngModel)]="textoBusqueda"
+        />
+      </div>
+
+      <div class="carrito-area">
+        <button class="boton-carrito" [class.pulse]="cartPulse">
+          <span class="carrito-icono">🛒</span>
+          <div class="carrito-texto">Llevas {{cartCount}} productos en tu canasta</div>
+        </button>
+      </div>
+    </header>
+
+    <section class="hero-grid">
+      <article class="pizarra-anuncios">
+        <div class="pizarra-contenido">
+          <span class="label-nuevo">Historias de la Cuadra</span>
+          <h2>¡Apoyemos lo nuestro!</h2>
+          <p>De nuestra familia a tu mesa. El corazón de la cuadra a un clic de distancia.</p>
+          <div class="pizarra-actions">
+            <button class="boton-pizarra">Ver dinámicas de ahorro</button>
+            <button class="boton-pizarra borde">Juntas del barrio</button>
+          </div>
+        </div>
+      </article>
+
+      <aside class="hero-promo-cards">
+        <div class="promo-card">
+          <span class="promo-icon">🚚</span>
+          <h3>Envío rápido</h3>
+          <p>Recibe tu compra en menos de 48 horas.</p>
+        </div>
+        <div class="promo-card">
+          <span class="promo-icon">💳</span>
+          <h3>Pagos seguros</h3>
+          <p>Tarjeta, Nequi o efectivo en domicilio.</p>
+        </div>
+        <div class="promo-card">
+          <span class="promo-icon">🌟</span>
+          <h3>Ofertas diarias</h3>
+          <p>Promociones nuevas todos los días.</p>
+        </div>
+      </aside>
+    </section>
+
+    <div class="seccion-header">
+      <div>
+        <h2>Categorías</h2>
+        <p>Explora por pasillo y encuentra lo que necesitas en un solo lugar.</p>
+      </div>
+    </div>
+
+    <div class="pasillos-wrapper">
+      <button class="pasillo-arrow left" (click)="scrollPasillos(-1)" [hidden]="!showLeftArrow">‹</button>
+      <nav class="pasillos-navegacion" #pasillos (scroll)="onPasillosScroll()">
+        <button class="pilla-categoria activa">✨ Todos</button>
+        <button class="pilla-categoria">🥛 Lácteos y Huevos</button>
+        <button class="pilla-categoria">🌾 Granos y Abarrotes</button>
+        <button class="pilla-categoria">🍎 Frutas y Verduras</button>
+        <button class="pilla-categoria">🧼 Limpieza del Hogar</button>
+        <button class="pilla-categoria">🪥 Cuidado Personal</button>
+      </nav>
+      <button class="pasillo-arrow right" (click)="scrollPasillos(1)" [hidden]="!showRightArrow">›</button>
+    </div>
+
+    <section class="ofertas-banner">
+      <div class="ofertas-texto">
+        <h3>Ofertas frescas para ti</h3>
+        <p>Descubre descuentos especiales en productos esenciales para tu hogar.</p>
+      </div>
+      <button class="boton-vermas">Descubrir ahora</button>
+    </section>
+
+    <main class="vitrina-productos">
+      <div class="tarjeta-producto" *ngFor="let p of productosFiltrados">
+        <div class="imagen-contenedor">
+          <img [src]="p.imagenPortada || p.url || 'https://via.placeholder.com/400x300?text=Producto'" [alt]="p.nombre || p.producto_nombre || 'Producto'">
+        </div>
+        <div class="info-contenedor">
+          <span class="producto-marca">{{p.marca || p.marca_producto || ''}}</span>
+          <h3 class="producto-nombre">{{p.nombre || p.producto_nombre || p.descripcion || 'Producto sin nombre'}}</h3>
+          <div class="precios-area">
+            <span class="precio-actual">{{p.precio ? ('$' + p.precio) : (p.price ? ('$' + p.price) : 'Consultar')}}</span>
+            <span *ngIf="p.precio_anterior || p.precioAnterior" class="precio-anterior">{{p.precio_anterior || p.precioAnterior}}</span>
+            <span *ngIf="p.descuento || p.porcentaje_descuento" class="etiqueta-descuento">-{{p.descuento || p.porcentaje_descuento}}%</span>
+          </div>
+        </div>
+        <div class="accion-producto">
+          <div *ngIf="!p.qty || p.qty <= 0">
+            <button class="boton-agregar-inicial" (click)="addToCart(p)">+ Llevar a casa</button>
+          </div>
+          <div *ngIf="p.qty && p.qty > 0" class="cantidad-control">
+            <button (click)="changeQty(p, -1)">-</button>
+            <div class="qty">{{p.qty}}</div>
+            <button (click)="changeQty(p, 1)">+</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="aviso-flotante">
+      <p>¡Ya casi completas tu mercado de la semana! 🛒</p>
+    </div>
+  </div>
+</div>

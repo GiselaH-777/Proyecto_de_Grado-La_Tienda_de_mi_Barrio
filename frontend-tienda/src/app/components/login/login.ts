@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; 
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/producto'; 
 import { LoginService } from '../../services/login.service'; 
 
 @Component({
@@ -23,7 +22,6 @@ export class LoginComponent {
 
   // Inyectamos ambos en el constructor
   constructor(
-    private auth: AuthService, 
     private loginService: LoginService, // Agregado para el correo
     private router: Router
   ) {}  
@@ -38,7 +36,7 @@ export class LoginComponent {
     }
 
     // PUNTO 2: Intento de conexión
-    this.auth.login(this.credenciales).subscribe({
+    this.loginService.login(this.credenciales).subscribe({
       next: (res: any) => {
         console.log("¿Qué recibimos del servidor?", res.user); 
          // 1. GUARDAMOS LA SESIÓN
@@ -53,10 +51,10 @@ export class LoginComponent {
         }
 
         console.log('Entrando a la vecindad...');
-        this.router.navigate(['/inicio']);
+        this.router.navigate(['/ecommerce']);
       },
-      error: (err) => {
-        console.error('❌ Error de conexión:', err.message);
+      error: (err: any) => {
+        console.error('❌ Error de conexión:', err?.message ?? err);
         alert('Credenciales inválidas. Verifica tu correo y contraseña.');
       }
     });

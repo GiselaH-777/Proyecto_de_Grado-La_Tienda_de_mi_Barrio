@@ -54,8 +54,8 @@ app.post('/api/login', (req, res) => {
         return res.status(400).json({ success: false, message: 'Datos incompletos' });
     }
 
-    // Agregamos documento, nombre y apellido a la consulta
-    const query = 'SELECT id_usuario, id_rol, documento, nombre, apellido, fotoUrl FROM Usuarios WHERE email = ? AND password = ?';
+    // Agregamos documento, nombre, apellido y correo a la consulta
+    const query = 'SELECT id_usuario, id_rol, documento, nombre, apellido, email, fotoUrl FROM usuarios WHERE email = ? AND password = ?';
     
     db.query(query, [email, password], (err, results) => {
         if (err) return res.status(500).json({ success: false, error: err });
@@ -79,17 +79,21 @@ if (!fs.existsSync(dir)) {
 }
 
 // Configuración de almacenamiento
+// almacenamiento en disco (para perfil) y en memoria (para procesar imagenes de producto)
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-        // Guardamos el archivo con la fecha para que no se repitan nombres
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
 });
 
 const upload = multer({ storage: storage });
+
+// Para procesar imágenes y guardarlas en la base de datos como Data URI
+const memoryStorage = multer.memoryStorage();
+const uploadMemory = multer({ storage: memoryStorage });
 
 // HACER QUE LA CARPETA SEA PÚBLICA (Para que Angular pueda ver las fotos)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -127,6 +131,91 @@ app.post('/api/perfil/foto', upload.single('foto'), (req, res) => {
         console.log('✅ UPDATE exitoso. Filas afectadas:', result.affectedRows);
         res.json({ success: true, url: urlFoto });
     });
+});
+
+// RUTA: Subir imagen de producto y guardarla en la tabla imagenes_productos
+// Se guarda como Data URI en el campo `url_imagen` para evitar cambios de esquema DB
+app.post('/api/productos/:id/imagenes', uploadMemory.single('imagen'), (req, res) => {
+  const productoId = req.params.id;
+  const es_portada = req.body.es_portada === '1' || req.body.es_portada === 'true' ? 1 : 0;
+
+  if (!req.file || !req.file.buffer) {
+    return res.status(400).json({ success: false, message: 'No se recibió archivo' });
+  }
+
+  const mime = req.file.mimetype;
+  const base64 = req.file.buffer.toString('base64');
+  const dataUri = `data:${mime};base64,${base64}`;
+
+  // Si la nueva imagen será portada, desactivamos previas portadas del mismo producto
+  const insertAndMaybeUnsetCover = () => {
+    const insertQuery = 'INSERT INTO imagenes_productos (url_imagen, es_portada, id_producto) VALUES (?, ?, ?)';
+    db.query(insertQuery, [dataUri, es_portada, productoId], (err, result) => {
+      if (err) {
+        console.error('❌ ERROR SQL al insertar imagen producto:', err);
+        return res.status(500).json({ success: false, message: 'Error al guardar imagen en BD', error: err });
+      }
+      res.json({ success: true, id_imagen: result.insertId, url: dataUri });
+    });
+  };
+
+  if (es_portada) {
+    const unsetQuery = 'UPDATE imagenes_productos SET es_portada = 0 WHERE id_producto = ?';
+    db.query(unsetQuery, [productoId], (err) => {
+      if (err) {
+        console.error('❌ ERROR SQL al desmarcar portadas:', err);
+        return res.status(500).json({ success: false, message: 'Error al actualizar portadas', error: err });
+      }
+      insertAndMaybeUnsetCover();
+    });
+  } else {
+    insertAndMaybeUnsetCover();
+  }
+});
+
+// RUTA: Obtener imágenes de un producto
+app.get('/api/productos/:id/imagenes', (req, res) => {
+  const productoId = req.params.id;
+  const query = 'SELECT id_imagen, url_imagen, es_portada, id_producto FROM imagenes_productos WHERE id_producto = ? ORDER BY es_portada DESC, id_imagen ASC';
+  db.query(query, [productoId], (err, results) => {
+    if (err) {
+      console.error('❌ ERROR SQL al obtener imágenes:', err);
+      return res.status(500).json({ success: false, message: 'Error al consultar imágenes', error: err });
+    }
+    res.json(results);
+  });
+});
+
+// RUTA: Marcar imagen como portada
+app.put('/api/productos/imagenes/:id/portada', (req, res) => {
+  const idImagen = req.params.id;
+
+  // obtener id_producto para poder desmarcar otras portadas
+  db.query('SELECT id_producto FROM imagenes_productos WHERE id_imagen = ?', [idImagen], (err, rows) => {
+    if (err) return res.status(500).json({ success: false, message: 'Error interno', error: err });
+    if (!rows || rows.length === 0) return res.status(404).json({ success: false, message: 'Imagen no encontrada' });
+    const idProducto = rows[0].id_producto;
+
+    const unset = 'UPDATE imagenes_productos SET es_portada = 0 WHERE id_producto = ?';
+    db.query(unset, [idProducto], (err) => {
+      if (err) return res.status(500).json({ success: false, message: 'Error al desmarcar portadas', error: err });
+
+      const setCover = 'UPDATE imagenes_productos SET es_portada = 1 WHERE id_imagen = ?';
+      db.query(setCover, [idImagen], (err2) => {
+        if (err2) return res.status(500).json({ success: false, message: 'Error al marcar portada', error: err2 });
+        res.json({ success: true });
+      });
+    });
+  });
+});
+
+// RUTA: Eliminar imagen
+app.delete('/api/productos/imagenes/:id', (req, res) => {
+  const idImagen = req.params.id;
+  db.query('DELETE FROM imagenes_productos WHERE id_imagen = ?', [idImagen], (err, result) => {
+    if (err) return res.status(500).json({ success: false, message: 'Error al eliminar imagen', error: err });
+    res.json({ success: true, affectedRows: result.affectedRows });
+  });
 });
 
 // B. Registro de Usuarios 
@@ -187,7 +276,7 @@ app.post('/api/enviar-recuperacion', (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ success: false, message: 'Falta el correo' });
 
-    const query = 'SELECT nombre FROM Usuarios WHERE email = ?';
+const query = 'SELECT nombre FROM usuarios WHERE email = ?';
     db.query(query, [email], (err, results) => {
         if (err) return res.status(500).json({ success: false, message: "Error interno" });
         if (results.length === 0) return res.status(404).json({ success: false, message: "Este correo no está registrado." });
@@ -279,15 +368,15 @@ app.put('/api/actualizar-password', (req, res) => {
 });
 
 app.put('/api/actualizar-perfil-completo', (req, res) => {
-    const { documento, nombre, correo, telefono, direccion, banco, tipo_cuenta, numero_cuenta } = req.body;
+    const { documento, nombre, apellido, correo, telefono, direccion, banco, tipo_cuenta, numero_cuenta } = req.body;
 
     const sql = `
         UPDATE usuarios 
-        SET nombre = ?, email = ?, telefono = ?, direccion = ?, banco = ?, tipo_cuenta = ?, numero_cuenta = ?
+        SET nombre = ?, apellido = ?, email = ?, telefono = ?, direccion = ?, banco = ?, tipo_cuenta = ?, numero_cuenta = ?
         WHERE documento = ?
     `;
 
-    const values = [nombre, correo, telefono, direccion, banco, tipo_cuenta, numero_cuenta, documento];
+    const values = [nombre, apellido, correo, telefono, direccion, banco, tipo_cuenta, numero_cuenta, documento];
 
     db.query(sql, values, (err, result) => {
         if (err) {
@@ -300,7 +389,10 @@ app.put('/api/actualizar-perfil-completo', (req, res) => {
         }
         
         console.log("✅ Perfil actualizado para el documento:", documento);
-        res.json({ success: true, message: "Información actualizada correctamente" });
+        res.json({ 
+            success: true, 
+            message: "¡Excelente! He actualizado tu información de contacto y cartera con éxito." 
+      });
     });
 });
 

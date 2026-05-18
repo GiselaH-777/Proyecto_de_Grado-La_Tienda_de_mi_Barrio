@@ -15,12 +15,16 @@ export class LoginService {
     return this.http.post(`${this.API_URL}/enviar-recuperacion`, { email });
   }
 
+  login(credenciales: any) {
+    return this.http.post(`${this.API_URL}/login`, credenciales);
+  }
+
   // Método para actualizar la contraseña (organizado aquí)
   actualizarPassword(identificador: string, nuevaPassword: string, passwordActual?: string) {
     return this.http.put(`${this.API_URL}/actualizar-password`, { 
-    identificador,    // Puede ser el email o el documento (FK)
-    nuevaPassword, 
-    passwordActual 
+      identificador,    // Puede ser el email o el documento (FK)
+      nuevaPassword, 
+      passwordActual 
     });
   }
 

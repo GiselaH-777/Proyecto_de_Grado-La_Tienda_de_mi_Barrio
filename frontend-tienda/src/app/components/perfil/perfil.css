@@ -3,7 +3,7 @@
    ============================================================ */
 .perfil-premium-container {
   min-height: 100vh;
-  padding: 60px 0;
+  padding: 20px 0;
   background-color: #fdfaf5;
   background-image: radial-gradient(#e5e0d8 0.5px, transparent 0.5px);
   background-size: 30px 30px;
@@ -14,14 +14,15 @@
 }
 
 .panel-maestro-comunidad {
-  width: 5000%;
-  max-width: 2500px;
+  width: 100%;
+  max-width: 1700px;
+  min-width: 1200px;
   background: linear-gradient(135deg, #ffffff 0%, #F7F2E9 100%) !important;
   backdrop-filter: none !important;
   border: 1.5px solid #FDE6D2 !important;
-  border-radius: 40px;
-  padding: 100px 300px;
-  box-shadow: 0 10px 30px rgba(184, 160, 134, 0.15) !important;
+  border-radius: 28px;
+  padding: 28px 24px;
+  box-shadow: 0 8px 20px rgba(184, 160, 134, 0.12) !important;
 }
 
 /* ============================================================
@@ -29,7 +30,7 @@
    ============================================================ */
 .header-vivo {
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: 25px;
 }
 
 .avatar-mirror {
@@ -48,9 +49,9 @@
 /* La foto propiamente */
 .avatar-container {
   position: relative;
-  width: 300px;
-  height: 300px;
-  margin: 30px auto;
+  width: 260px;
+  height: 260px;
+  margin: 20px auto;
 }
 
 .avatar-mirror {
@@ -112,33 +113,33 @@
 .grid-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  margin-bottom: 30px;
+  gap: 20px;
+  margin-bottom: 20px;
 }
 
 .grid-nombres-apellidos {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  margin-bottom: 40px;
+  gap: 18px;
+  margin-bottom: 25px;
 }
 
 .card-elevada {
   width: 100%;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(15px);
-  border-radius: 32px;
-  padding: 65px;
-  margin-bottom: 40px;
+  border-radius: 28px;
+  padding: 28px;
+  margin-bottom: 25px;
   border: 1px solid rgba(255, 255, 255, 1);
-  box-shadow: 0 20px 40px rgba(214, 110, 0, 0.08);
+  box-shadow: 0 18px 32px rgba(214, 110, 0, 0.06);
 }
 
 .card-glass-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 25px;
 }
 
 .titulo-con-icono {
@@ -159,7 +160,7 @@
 .input-glow-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 25px;
+  margin-bottom: 18px;
 }
 
 .input-glow-group label {
@@ -192,7 +193,7 @@
 
 /* --- ID Y CONTRASEÑA --- */
 .id-master-group {
-  margin-bottom: 35px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
 }
@@ -225,18 +226,6 @@
   align-items: center;
   width: 100%;
 }
-
-.eye-btn-modern {
-  position: absolute;
-  right: 15px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;
-  opacity: 0.5;
-  transition: 0.3s;
-}
-
 /* ============================================================
    5. BOTONES Y ACCIONES (PREMIUM)
    ============================================================ */

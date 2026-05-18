@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router'; // CORREGIDO: Se agregó RouterModule
 
@@ -10,6 +10,7 @@ import { Router, RouterModule } from '@angular/router'; // CORREGIDO: Se agregó
   styleUrls: ['./sidebar.css']
 })
 export class Sidebar implements OnInit {
+  @Output() toggleMenu = new EventEmitter<boolean>();
   // Variables de conexión con el HTML
   usuario: any = {
     nombre: '',

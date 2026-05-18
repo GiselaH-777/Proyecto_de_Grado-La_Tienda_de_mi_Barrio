@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root' // <-- Esto es lo más importante para que el error desaparezca
+  providedIn: 'root'
 })
-export class AuthService {
-  private apiUrl = 'http://localhost:3000/api';
+export class ProductoService {
+  private apiUrl = 'http://localhost:3000/api/productos';
 
   constructor(private http: HttpClient) { }
 
@@ -16,5 +17,14 @@ export class AuthService {
   registrar(datosUsuario: any) {
     // Esto enviará el JSON con nombre, apellido, email, etc.
     return this.http.post(`${this.apiUrl}/registro`, datosUsuario);
+  }
+
+  crearProducto(datosProducto: any): Observable<any> {
+    // Realizamos una petición POST enviando todo el objeto (nombre, precio, imágenes, etc.)
+    return this.http.post<any>(this.apiUrl, datosProducto);
+  }
+
+  obtenerProductos(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
   }
 }

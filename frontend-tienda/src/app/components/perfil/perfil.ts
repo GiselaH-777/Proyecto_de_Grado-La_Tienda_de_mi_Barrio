@@ -232,6 +232,8 @@ export class Perfil implements OnInit {
     // 1. Creamos el objeto con la estructura de tu base de datos
     const datosActualizados = {
       documento: this.usuario.documento, // Identificador vital
+      nombre: this.usuario.nombre,
+      apellido: this.usuario.apellido,
       correo: this.usuario.email,
       telefono: this.usuario.telefono,
       direccion: this.usuario.direccion,
@@ -244,12 +246,10 @@ export class Perfil implements OnInit {
     this.loginService.actualizarPerfilCompleto(datosActualizados).subscribe({
       next: (res: any) => {
         console.log('Datos actualizados en el servidor:', res);
-        // Usamos un mensaje empático como acordamos
         alert('¡Excelente! He actualizado tu información de contacto y cartera con éxito.');
         
-        // Actualizamos el localStorage para que el sidebar y otros componentes vean el cambio
-        const usuarioActualizado = { ...this.usuario, email: this.usuario.email };
-        localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
+        // Guardamos el usuario completo actualizado en el localStorage
+        localStorage.setItem('usuario', JSON.stringify(this.usuario));
       },
       error: (err) => {
         console.error(err);

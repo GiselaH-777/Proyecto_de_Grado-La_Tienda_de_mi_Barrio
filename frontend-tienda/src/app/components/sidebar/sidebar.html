@@ -39,13 +39,13 @@
   <div class="nav-sections">
     <div class="nav-group">
       <span class="group-title" *ngIf="!isCollapsed">SECCIÓN PRINCIPAL</span>
-      <button class="nav-btn" (click)="irAModulo('inicio')" routerLinkActive="active">
-        <span class="btn-emoji">🏠</span>
-        <span class="btn-text" *ngIf="!isCollapsed">Inicio</span>
-      </button>
-      <button class="nav-btn" (click)="irAModulo('compras')">
+      <a class="nav-btn" routerLink="/ecommerce" routerLinkActive="active">
         <span class="btn-emoji">🛍️</span>
-        <span class="btn-text" *ngIf="!isCollapsed">Comprar ahora</span>
+        <span class="btn-text" *ngIf="!isCollapsed">Tienda</span>
+      </a>
+      <button class="nav-btn" (click)="irAModulo('compras')">
+        <span class="btn-emoji">🏷️</span>
+        <span class="btn-text" *ngIf="!isCollapsed">Promociones</span>
       </button>
     </div>
 
