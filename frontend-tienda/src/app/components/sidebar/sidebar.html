@@ -8,7 +8,7 @@
         <span class="brand-sub">Shop</span>
       </div>
     </div>
-    <button class="hamburger-btn" (click)="toggleSidebar()" [class.is-active]="!isCollapsed">
+    <button type="button" class="hamburger-btn" (click)="toggleSidebar()" [class.is-active]="!isCollapsed">
       <span></span>
       <span></span>
       <span></span>
@@ -43,22 +43,22 @@
         <span class="btn-emoji">🛍️</span>
         <span class="btn-text" *ngIf="!isCollapsed">Tienda</span>
       </a>
-      <button class="nav-btn" (click)="irAModulo('compras')">
+      <a class="nav-btn" routerLink="/ofertas" routerLinkActive="active">
         <span class="btn-emoji">🏷️</span>
         <span class="btn-text" *ngIf="!isCollapsed">Promociones</span>
-      </button>
+      </a>
     </div>
 
     <div class="nav-group">
       <span class="group-title" *ngIf="!isCollapsed">GESTIÓN DE DINERO</span>
-      <button class="nav-btn" (click)="irAModulo('pagos')">
-        <span class="btn-emoji">💳</span>
-        <span class="btn-text" *ngIf="!isCollapsed">Pagar aquí</span>
-      </button>
-      <button class="nav-btn" (click)="irAModulo('facturas')">
+      <a class="nav-btn" routerLink="/pedidos-pendientes" routerLinkActive="active">
+        <span class="btn-emoji">🎯</span>
+        <span class="btn-text" *ngIf="!isCollapsed">Pedidos Pendientes</span>
+      </a>
+      <a class="nav-btn" routerLink="/facturas" routerLinkActive="active">
         <span class="btn-emoji">📄</span>
         <span class="btn-text" *ngIf="!isCollapsed">Mis Facturas</span>
-      </button>
+      </a>
     </div>
   </div>
 

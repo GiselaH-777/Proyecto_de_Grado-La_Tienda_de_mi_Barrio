@@ -1,0 +1,95 @@
+<div class="mis-facturas-page">
+  <!-- ENCABEZADO: El Historial de Cuentas -->
+  <header class="facturas-header">
+    <div class="header-content">
+      <div class="titulo-seccion">
+        <h1>Mis Facturas</h1>
+        <p class="subtitulo">Tu historial de compras y recibos de la tienda</p>
+      </div>
+      <div class="contador-badge" *ngIf="!cargando">
+        <span class="numero">{{ facturas.length }}</span>
+        <span class="etiqueta">{{ facturas.length === 1 ? 'factura' : 'facturas' }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ESTADO DE CARGA: El Tendero Buscando -->
+  <ng-container *ngIf="cargando">
+    <section class="skeleton-loading">
+      <div class="loading-message">
+        <p class="mensaje-amigable">Espera un momento, vecina... 📑</p>
+        <p class="submensaje">Estamos desempolvando el libro de cuentas para traerte todo al detalle.</p>
+      </div>
+      <div class="skeleton-cards">
+        <div *ngFor="let item of [1, 2, 3]" class="skeleton-card">
+          <div class="skeleton-line short"></div>
+          <div class="skeleton-line medium"></div>
+          <div class="skeleton-line short"></div>
+        </div>
+      </div>
+    </section>
+  </ng-container>
+
+  <!-- ERROR: Si algo salió mal -->
+  <ng-container *ngIf="!cargando && error">
+    <section class="error-state">
+      <div class="error-icon">⚠️</div>
+      <p class="error-mensaje">{{ error }}</p>
+      <button class="boton-reintentar" (click)="obtenerFacturas()">Reintentar</button>
+    </section>
+  </ng-container>
+
+  <!-- VACÍO: Sin facturas registradas -->
+  <ng-container *ngIf="!cargando && facturas.length === 0 && !error">
+    <section class="empty-state">
+      <div class="empty-illustration">📭</div>
+      <h2>Aún no tienes facturas</h2>
+      <p>Cuando hagas tu primera compra y realices el pago, aquí aparecerá todo tu historial de recibos.</p>
+    </section>
+  </ng-container>
+
+  <!-- LISTADO DE FACTURAS: Los Recibos de la Tienda -->
+  <ng-container *ngIf="!cargando && facturas.length > 0">
+    <section class="facturas-container">
+      <article *ngFor="let factura of facturas" class="factura-card">
+        <!-- Zona Izquierda: Icono y Fecha -->
+        <div class="factura-left">
+          <div class="factura-icon">📄</div>
+          <div class="factura-fecha">
+            <span class="fecha-label">{{ formatearFecha(factura.created_at) }}</span>
+            <span class="factura-id">#{{ factura.id_factura || factura.id }}</span>
+          </div>
+        </div>
+
+        <!-- Zona Centro: Resumen Rápido -->
+        <div class="factura-center">
+          <p class="resumen-nombre">{{ factura.nombre || factura.RegistrationName || 'Mi compra' }}</p>
+          <p class="resumen-meta">Compra registrada</p>
+        </div>
+
+        <!-- Zona Derecha: Total y Estado -->
+        <div class="factura-right">
+          <div class="monto-zona">
+            <span class="monto-label">Total</span>
+            <span class="monto-valor">{{ formatearDinero(factura.total) }}</span>
+          </div>
+          <div class="estado-badge" [ngClass]="'badge-' + getEstadoBadge(factura.estado).clase">
+            <span>{{ getEstadoBadge(factura.estado).emoji }} {{ getEstadoBadge(factura.estado).texto }}</span>
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="factura-actions">
+          <button class="btn-detalle" (click)="abrirDetalle(factura)" title="Ver detalle de la factura">
+            <span class="icono">📄</span>
+            <span class="texto">Detalle</span>
+          </button>
+          <button class="btn-descargar" (click)="descargarRecibo(factura)" title="Descargar recibo en PDF">
+            <span class="icono">📥</span>
+            <span class="texto">Descargar</span>
+          </button>
+        </div>
+      </article>
+    </section>
+  </ng-container>
+</div>

@@ -21,16 +21,20 @@ export class Sidebar implements OnInit {
 
   isCollapsed: boolean = false; // CORREGIDO: Se agregó el ;
 
+   private storageListener = () => this.cargarDatos();
+
   constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.cargarDatos();
 
     // Escuchar cambios en localStorage (cuando perfil sube foto)
-  window.addEventListener('storage', () => {
-    this.cargarDatos();
-  });
+  window.addEventListener('storage', this.storageListener);
 }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('storage', this.storageListener);
+  }
 
   cargarDatos() {
     const datosGuardados = localStorage.getItem('usuario');
@@ -71,5 +75,6 @@ export class Sidebar implements OnInit {
 
   toggleSidebar() {
     this.isCollapsed = !this.isCollapsed;
+    this.toggleMenu.emit(this.isCollapsed);
   }
 }

@@ -29,28 +29,39 @@ html, body {
 }
 
 /* 4. CONTENEDOR PRINCIPAL (MAIN) */
+.app-layout {
+  position: relative;
+  overflow-x: hidden;
+}
+
 main {
   flex: 1;
-  min-width: 0; 
+  min-width: 0;
+  position: relative;
   background-color: var(--bg-app);
   display: flex;
   flex-direction: column;
   align-items: center; /* Centra las tarjetas horizontalmente */
-  
-  /* Gestión de espacio para el Menú Lateral */
-  margin-left: var(--sidebar-width);
-  transition: margin-left var(--transition-speed) ease-in-out;
+  transition: left var(--transition-speed) ease-in-out, width var(--transition-speed) ease-in-out;
   padding: 20px;
+  left: var(--sidebar-mini);
+  width: calc(100% - var(--sidebar-mini));
 }
 
-/* Ajuste de margen cuando el menú es mini */
+.app-layout:not(.sidebar-is-collapsed) main {
+  left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+}
+
 .app-layout.sidebar-is-collapsed main {
-  margin-left: var(--sidebar-mini);
+  left: var(--sidebar-mini);
+  width: calc(100% - var(--sidebar-mini));
 }
 
 /* 5. MODO FULL WIDTH (Login, Registro, Recuperación) */
 main.full-width {
   margin-left: 0 !important;
+  padding-left: 0 !important;
   background-color: var(--bg-crema) !important;
   justify-content: center; /* Centrado vertical para el login */
 }

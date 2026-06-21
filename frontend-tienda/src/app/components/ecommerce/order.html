@@ -1,0 +1,52 @@
+﻿<div class="order-page">
+  <div class="order-header">
+    <button class="back-button" type="button" (click)="continueShopping()">
+        <span class="arrow">←</span>
+        Seguir comprando
+      </button>
+    <div>
+      <h2>Mi pedido</h2>
+      <p>{{ cartService.totalCount }} producto(s) en la canasta</p>
+    </div>
+  </div>
+
+  <section *ngIf="cartItems.length > 0; else emptyCart">
+    <div class="cart-list">
+      <article class="cart-item" *ngFor="let item of cartItems">
+        <div class="cart-thumb">
+          <img [src]="item.producto.imagenPortada || item.producto.url || 'https://via.placeholder.com/120?text=Foto'" [alt]="item.producto.nombre || item.producto.producto_nombre || 'Producto'" />
+        </div>
+        <div class="cart-details">
+          <h3>{{ item.producto.nombre || item.producto.producto_nombre || 'Producto seleccionado' }}</h3>
+          <p>{{ item.producto.descripcion || 'Descripción no disponible' }}</p>
+          <div class="cart-controls">
+            <button type="button" (click)="changeQty(item, -1)">-</button>
+            <span>{{ item.qty }}</span>
+            <button type="button" (click)="changeQty(item, 1)">+</button>
+          </div>
+          <p class="cart-price">Precio unitario: {{ formatMoney(item.producto.precio || item.producto.price || 0) }}</p>
+        </div>
+        <button class="remove-button" type="button" (click)="removeItem(item)">Eliminar</button>
+      </article>
+    </div>
+
+    <aside class="order-summary">
+      <div class="summary-box">
+        <h3>Resumen del pedido</h3>
+        <p>Total a pagar</p>
+        <strong>{{ formatMoney(cartService.totalAmount) }}</strong>
+      </div>
+      <div class="payment-actions">
+        <button class="pay-btn pse" type="button" (click)="payWith('PSE')">Pagar con PSE</button>
+        <button class="pay-btn wompi" type="button" (click)="payWith('Wompi')">Pagar con Wompi</button>
+      </div>
+    </aside>
+  </section>
+
+  <ng-template #emptyCart>
+    <div class="empty-cart">
+      <p>Tu carrito está vacío. Agrega productos para verlos aquí.</p>
+      <button type="button" (click)="continueShopping()">Volver a comprar</button>
+    </div>
+  </ng-template>
+</div>

@@ -2,6 +2,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const nodemailer = require('nodemailer');
+const { crearFacturaPOS } = require('./facturas-pos');
 
 const app = express();
 const PORT = 3000;
@@ -176,7 +177,7 @@ app.post('/api/productos/:id/imagenes', uploadMemory.single('imagen'), (req, res
 // RUTA: Obtener imágenes de un producto
 app.get('/api/productos/:id/imagenes', (req, res) => {
   const productoId = req.params.id;
-  const query = 'SELECT id_imagen, url_imagen, es_portada, id_producto FROM imagenes_productos WHERE id_producto = ? ORDER BY es_portada DESC, id_imagen ASC';
+  const query = 'SELECT id_imagen, url_imagen, es_portada, id_producto FROM imagenes_productos WHERE id_producto = ? ORDER BY es_portada DESC, id_imagen DESC';
   db.query(query, [productoId], (err, results) => {
     if (err) {
       console.error('❌ ERROR SQL al obtener imágenes:', err);
@@ -257,6 +258,123 @@ app.get('/api/perfil/:documento', (req, res) => {
   db.query(query, [req.params.documento], (err, result) => {
     if (err) return res.status(500).json(err);
     res.json(result[0]);
+  });
+});
+
+// --- 4.5. RUTAS DE PEDIDOS PENDIENTES ---
+app.post('/api/pedidos', (req, res) => {
+  const {
+    cliente = {},
+    items = [],
+    total,
+    estado = 'Pendiente'
+  } = req.body;
+
+  const documento = cliente.documento || null;
+  const email = cliente.email || null;
+  const totalFactura = Number(total) || 0;
+  const facturaEstado = estado === 'Pagada' ? 'Pagada' : 'Pendiente';
+
+  const insertFactura = (idCliente) => {
+    const query = 'INSERT INTO facturas (id_cliente, total, estado) VALUES (?, ?, ?)';
+    db.query(query, [idCliente, totalFactura, facturaEstado], (err, result) => {
+      if (err) {
+        console.error('❌ Error al guardar factura pendiente:', err);
+        return res.status(500).json({ success: false, message: 'Error al guardar la factura', error: err });
+      }
+
+      const idFactura = result.insertId;
+      const detalleValues = (items || [])
+        .map((item) => {
+          const idProducto = item.id_producto ?? item.idProducto ?? item.id ?? null;
+          const cantidad = Number(item.cantidad ?? item.qty ?? 0);
+          const precio = Number(item.precio ?? item.precio_unitario ?? 0);
+          return idProducto && cantidad > 0 ? [idFactura, idProducto, cantidad, precio] : null;
+        })
+        .filter(Boolean);
+
+      if (detalleValues.length === 0) {
+        return res.json({ success: true, message: 'Pedido guardado como factura pendiente', id_factura: idFactura });
+      }
+
+      const detalleQuery = 'INSERT INTO detallefactura (id_factura, id_producto, cantidad, precio_unitario) VALUES ?';
+      db.query(detalleQuery, [detalleValues], (err2) => {
+        if (err2) {
+          console.error('❌ Error al guardar detallefactura:', err2);
+          return res.status(500).json({
+            success: false,
+            message: 'Factura creada, pero no se pudo guardar el detalle',
+            id_factura: idFactura,
+            error: err2
+          });
+        }
+
+        res.json({ success: true, message: 'Pedido guardado en facturas y detallefactura', id_factura: idFactura });
+      });
+    });
+  };
+
+  if (documento || email) {
+    const lookupQuery = 'SELECT id_usuario FROM usuarios WHERE documento = ? OR email = ? LIMIT 1';
+    db.query(lookupQuery, [documento, email], (err, rows) => {
+      if (err) {
+        console.error('❌ Error al buscar cliente por documento/email:', err);
+        return res.status(500).json({ success: false, message: 'Error al buscar cliente', error: err });
+      }
+      const idCliente = rows?.[0]?.id_usuario ?? null;
+      insertFactura(idCliente);
+    });
+  } else {
+    insertFactura(null);
+  }
+});
+
+// Ejemplo de uso en tu enrutador Express
+app.post('/api/ventas/pagar', async (req, res) => {
+  const { id_usuario, metodo_pago, productos } = req.body;
+
+  if (!id_usuario || !metodo_pago || !Array.isArray(productos) || productos.length === 0) {
+    return res.status(400).json({
+      success: false,
+      mensaje: 'Faltan datos obligatorios: id_usuario, metodo_pago o productos'
+    });
+  }
+
+  const resultado = await crearFacturaPOS(id_usuario, metodo_pago, productos);
+
+  if (!resultado.success) {
+    return res.status(500).json({
+      mensaje: 'Error al procesar la venta',
+      error: resultado.error
+    });
+  }
+
+  // AQUÍ ENVIARÍAS EL 'resultado.jsonDocumentoElectronico' A TU PROVEEDOR TECNOLÓGICO DE LA DIAN.
+  // Cuando el proveedor te devuelva el CUFE, el QR y el XML, haces un UPDATE a la tabla 'facturas_pos'.
+  return res.status(201).json({
+    mensaje: 'Venta registrada con éxito',
+    idFactura: resultado.idFactura,
+    jsonParaDian: resultado.jsonDocumentoElectronico
+  });
+});
+
+app.get('/api/facturas/usuario/:idUsuario', (req, res) => {
+  const idUsuario = req.params.idUsuario;
+  const query = `
+    SELECT f.id_factura, f.id_cliente, f.total, f.estado, u.nombre, u.apellido
+    FROM facturas f
+    LEFT JOIN usuarios u ON f.id_cliente = u.id_usuario
+    WHERE f.id_cliente = ?
+    ORDER BY f.id_factura DESC
+  `;
+
+  db.query(query, [idUsuario], (err, results) => {
+    if (err) {
+      console.error('❌ Error al obtener facturas por usuario:', err);
+      return res.status(500).json({ success: false, message: 'Error al consultar facturas', error: err });
+    }
+
+    res.json(results);
   });
 });
 
@@ -405,8 +523,16 @@ app.get('/api/productos', (req, res) => {
     });
 });
 
+app.get('/api/categorias', (req, res) => {
+    db.query('SELECT * FROM categorias', (err, results) => {
+        if (err) return res.status(500).send(err);
+        res.json(results);
+    });
+});
+
 // --- 6. ENCENDIDO DEL SERVIDOR ---
 app.listen(PORT, () => {
     console.log(`🚀 Servidor listo en: http://localhost:${PORT}`);
     console.log(`🔗 Ruta de productos: http://localhost:${PORT}/api/productos`);
+    console.log(`🔗 Ruta de categorías: http://localhost:${PORT}/api/categorias`);
 });

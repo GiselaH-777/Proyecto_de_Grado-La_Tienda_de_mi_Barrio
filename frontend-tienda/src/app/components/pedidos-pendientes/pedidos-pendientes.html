@@ -1,0 +1,211 @@
+<div class="pending-page">
+  <div class="header-craft">
+    <div class="header-actions">
+      <button class="back-button" type="button" (click)="goToOfertas()">
+        <span class="arrow">←</span>
+        Ofertas
+      </button>
+      <button class="back-button" type="button" (click)="continueShopping()">
+        <span class="arrow">←</span>
+        Inicio
+      </button>
+    </div>
+
+    <div class="header-text">
+      <h1>Pedidos pendientes</h1>
+      <p class="muted">Tu canasta ya está lista. Revisa los productos, confirma dirección y elige cómo pagar.</p>
+    </div>
+
+    <div class="header-right">
+      <div class="header-summary-box">
+        <div class="count">{{ cartService.totalCount }} productos</div>
+        <div class="total">{{ formatMoney(totalAmount) }}</div>
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="!cartEmpty; else emptyCart">
+    <div class="pending-grid">
+      <section class="pending-side summary-panel">
+        <div class="panel-card">
+          <div class="panel-title">
+            <h2>Resumen de la canasta</h2>
+            <span>Tu pedido se arma desde aquí.</span>
+          </div>
+          <div class="summary-row">
+            <span>Subtotal</span>
+            <strong>{{ formatMoney(subtotal) }}</strong>
+          </div>
+          <div class="summary-row">
+            <span>Envío</span>
+            <strong>{{ formatMoney(shippingCost) }}</strong>
+          </div>
+          <div class="summary-row total-row">
+            <span>Total</span>
+            <strong>{{ formatMoney(totalAmount) }}</strong>
+          </div>
+        </div>
+
+        <div class="panel-card items-card">
+          <h3>Productos en el pedido</h3>
+          <article class="order-item" *ngFor="let item of cartItems">
+            <div>
+              <p class="item-name">{{ item.producto.nombre || item.producto.producto_nombre || 'Producto' }}</p>
+              <p class="item-meta">Cant: {{ item.qty }} · {{ formatMoney(getProductPrice(item.producto)) }} c/u</p>
+            </div>
+            <div class="item-total">{{ formatMoney(getProductPrice(item.producto) * item.qty) }}</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="pending-side checkout-panel">
+        <div class="panel-card">
+          <div class="panel-title">
+            <h2>Datos de entrega</h2>
+            <span>Auto-completado desde tus datos de sesión.</span>
+          </div>
+
+          <label>Nombre completo</label>
+          <input class="form-input" type="text" [value]="userName" disabled />
+
+          <label>Documento</label>
+          <input class="form-input" type="text" [value]="user.documento" disabled />
+
+          <label>Correo</label>
+          <input class="form-input" type="text" [value]="user.email" disabled />
+
+          <label>Dirección exacta</label>
+          <textarea class="form-input" rows="3" [(ngModel)]="deliveryAddress" placeholder="Ej: Calle 45 #12-34, apto 2"></textarea>
+
+          <label>Teléfono de contacto</label>
+          <input class="form-input" type="tel" [(ngModel)]="contactPhone" placeholder="Ej: 3001234567" />
+
+          <label>Notas adicionales</label>
+          <textarea class="form-input" rows="3" [(ngModel)]="notes" placeholder="Ej: El arroz por favor sin clavos."></textarea>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-title">
+            <h2>Método de pago</h2>
+            <span>Elige cómo quieres cerrar tu pedido.</span>
+          </div>
+
+          <div class="payment-methods">
+            <button type="button" class="payment-card"
+              *ngFor="let method of paymentMethods"
+              [class.active]="selectedPaymentMethod === method"
+              [class.cash]="method === 'Efectivo al recibir'"
+              (click)="selectPayment(method)">
+              <span class="pm-left" role="img" [attr.aria-label]="method === 'Efectivo al recibir' ? 'Dinero' : (method === 'Nequi / Daviplata' ? 'Nequi' : 'Tarjeta')">
+                <ng-container [ngSwitch]="method">
+                  <span *ngSwitchCase="'Efectivo al recibir'" class="emoji">💵</span>
+                  <span *ngSwitchCase="'Nequi / Daviplata'" class="emoji">📲</span>
+                  <span *ngSwitchCase="'Tarjeta débito/crédito'" class="emoji">💳</span>
+                  <span *ngSwitchDefault class="emoji">💰</span>
+                </ng-container>
+              </span>
+              <span class="pm-label">{{ method }}</span>
+              <span class="pm-check" *ngIf="selectedPaymentMethod === method">
+                <span class="check-circle">✔︎</span>
+              </span>
+            </button>
+          </div>
+
+          <div class="payment-details">
+            <ng-container [ngSwitch]="selectedPaymentMethod">
+              <div *ngSwitchCase="'Efectivo al recibir'">
+                <p>Nos preparamos para que el repartidor tenga la vuelta exacta.</p>
+                <label>¿Con cuánto pagarás?</label>
+                <div class="amount-wrap">
+                  <div class="amount-shortcuts" role="tablist" aria-label="Atajos de pago">
+                    <button type="button" class="shortcut" (click)="setAmountShortcut(22000)">[$22.000]</button>
+                    <button type="button" class="shortcut" (click)="setAmountShortcut(50000)">[$50.000]</button>
+                    <button type="button" class="shortcut" (click)="setAmountShortcut(totalAmount)">[Pago Exacto]</button>
+                  </div>
+
+                  <div class="amount-field">
+                    <input class="amount-input" type="number" [(ngModel)]="amountForChange" min="0" placeholder="Ej: 50000" aria-label="Monto para cambio" />
+                  </div>
+                </div>
+                <div class="micro-copy">¡Listo! Así el repartidor lleva tus vueltas completas sin embolatarse.</div>
+              </div>
+
+              <div *ngSwitchCase="'Nequi / Daviplata'">
+                <p>Pago seguro con Wompi (tarjeta o PSE).</p>
+                <div class="wompi-wrap">
+                  <p class="wompi-note">Vuelve aquí cuando esté confirmado.</p>
+                  <button type="button" class="wompi-button wompi-green" (click)="payWithWompi()">Pagar con Wompi</button>
+                </div>
+              </div>
+
+              <div *ngSwitchCase="'Tarjeta débito/crédito'">
+                <p>Por ahora guardamos tus datos de tarjeta como referencia para la compra.</p>
+                <label>Número de tarjeta</label>
+                <input type="text" [(ngModel)]="cardNumber" placeholder="XXXX XXXX XXXX XXXX" />
+                <div class="row-two">
+                  <div>
+                    <label>Vencimiento</label>
+                    <input type="text" [(ngModel)]="cardExpiry" placeholder="MM/AA" />
+                  </div>
+                  <div>
+                    <label>CVC</label>
+                    <input type="text" [(ngModel)]="cardCvc" placeholder="123" />
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <button class="confirm-button" type="button" (click)="confirmOrder()" [disabled]="submitting">
+          {{ submitting ? 'Confirmando pedido...' : 'Confirmar pedido' }}
+        </button>
+
+        <p class="order-feedback" *ngIf="orderMessage">{{ orderMessage }}</p>
+      </section>
+    </div>
+  </ng-container>
+
+  <ng-template #emptyCart>
+    <div class="empty-state">
+      <div class="empty-illustration" aria-hidden="true">
+            <!-- more literal woven basket SVG -->
+            <svg width="240" height="160" viewBox="0 0 240 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
+              <defs>
+                <linearGradient id="bg" x1="0" x2="1">
+                  <stop offset="0" stop-color="#fff" />
+                  <stop offset="1" stop-color="#FFF7F0" />
+                </linearGradient>
+              </defs>
+              <!-- shadow under basket -->
+              <ellipse cx="120" cy="130" rx="56" ry="10" fill="rgba(43,26,11,0.06)" />
+              <!-- basket body -->
+              <path d="M40 80 C48 120, 192 120, 200 80 L200 98 C192 135, 48 135, 40 98 Z" fill="#FFE6D2" stroke="#D9B48E" stroke-width="1.5" />
+              <!-- weave pattern (horizontal) -->
+              <g stroke="#E6CBB3" stroke-width="2">
+                <path d="M52 88 H188" stroke-linecap="round"/>
+                <path d="M52 98 H188" stroke-linecap="round"/>
+                <path d="M62 108 H178" stroke-linecap="round"/>
+              </g>
+              <!-- vertical weave arcs -->
+              <g stroke="#D9AA77" stroke-width="2">
+                <path d="M70 82 C74 94, 74 106, 70 118" stroke-linecap="round"/>
+                <path d="M92 82 C96 94, 96 106, 92 118" stroke-linecap="round"/>
+                <path d="M114 82 C118 94, 118 106, 114 118" stroke-linecap="round"/>
+                <path d="M136 82 C140 94, 140 106, 136 118" stroke-linecap="round"/>
+                <path d="M158 82 C162 94, 162 106, 158 118" stroke-linecap="round"/>
+              </g>
+              <!-- handle -->
+              <path d="M55 76 C80 28, 160 28, 185 76" stroke="#D97300" stroke-width="5" stroke-linecap="round" fill="none" />
+              <!-- small decorative stitches -->
+              <path d="M80 56 C96 46, 120 46, 136 56" stroke="#FF8A00" stroke-width="1.6" stroke-linecap="round" fill="none" />
+            </svg>
+      </div>
+      <h2>¡Tu mesa está limpia, vecina! 🏠</h2>
+      <p class="empty-copy">Aún no tienes ningún pedido en camino. Date una pasadita por los pasillos de la tienda y llena la canasta con lo mejor del barrio para armar tu orden en un dos por tres.</p>
+      <div class="empty-actions">
+        <button type="button" class="primary-action" (click)="continueShopping()">Ir a la tienda</button>
+      </div>
+    </div>
+  </ng-template>
+</div>

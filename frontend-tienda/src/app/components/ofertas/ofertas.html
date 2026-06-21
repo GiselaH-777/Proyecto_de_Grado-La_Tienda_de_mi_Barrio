@@ -1,0 +1,93 @@
+<div class="offers-page">
+  <div class="blackboard">
+    <div class="wood-frame">
+      <div class="blackboard-inner">
+        <div class="blackboard-left">
+          <h1 class="bb-title">¡Ofertas frescas para ti!</h1>
+          <p class="bb-sub">Promociones pensadas para que ahorres en tu compra semanal.</p>
+        </div>
+
+        <div class="blackboard-right">
+          <div class="cart-wrap">
+            <button class="cart-button" type="button" (click)="goToCart()">
+              <span class="cart-text">Ver mi pedido</span>
+              <span class="cart-icon" aria-hidden="true">🧺</span>
+              <span class="cart-count" [class.empty]="cartService.totalCount === 0">{{ cartService.totalCount }}</span>
+            </button>
+          </div>
+          <div class="cart-tooltip" *ngIf="cartService.totalCount === 0">¿No llevas nada todavía, vecina? ¡Anímate!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="offers-container">
+    <div class="left-col">
+      <div class="ofertas-contenedor">
+        <h2>Ofertas especiales</h2>
+        <p>Encuentra promociones y descuentos vigentes para tu mercado.</p>
+
+        <div class="oferta-block" *ngFor="let oferta of ofertas">
+          <div class="oferta-card">
+            <div class="oferta-banner"><img [src]="oferta.image" alt="{{ oferta.title }}"></div>
+            <div class="oferta-info">
+              <h3>{{ oferta.title }}</h3>
+              <p>{{ oferta.subtitle }}</p>
+            </div>
+            <div class="mini-vitrina">
+              <div class="mini-item" *ngFor="let p of getProductsForOferta(oferta, 4)">
+                <div class="mini-thumb"><img [src]="p.imagenPortada || p.url || 'https://via.placeholder.com/200?text=Producto'" [alt]="p.nombre"></div>
+                <div class="mini-meta">
+                  <div class="mini-name">{{ p.nombre || p.producto_nombre }}</div>
+                  <div class="mini-prices">
+                    <span class="precio-anterior" *ngIf="p.precio_anterior || p.precioAnterior">{{ p.precio_anterior || p.precioAnterior }}</span>
+                    <span class="precio-oferta">{{ p.precio ? ('$' + p.precio) : (p.price ? ('$' + p.price) : 'Consultar') }}</span>
+                  </div>
+                  <button class="mini-add" (click)="addToCart(p)">+ Agregar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="right-col">
+      <article class="offer-card vitrina" [class.added]="bundleAdded">
+        <div class="card-head">
+          <h2>La Vitrina del Ahorro</h2>
+          <span class="badge">3x2</span>
+        </div>
+        <p class="card-copy">Lleva 3 productos seleccionados y paga solo 2 — arropa la despensa con lo mejor de la casa.</p>
+        <div class="mini-products">
+          <div class="mini" *ngFor="let p of promocionProductos | slice:0:3">
+            <img [src]="p.imagenPortada || 'https://via.placeholder.com/80'" [alt]="p.nombre">
+          </div>
+        </div>
+        <button class="hero-button gel" (click)="addCombo3x2()">
+          <span *ngIf="!bundleAdded">🛒 ¡Asegurar mis ofertas!</span>
+          <span *ngIf="bundleAdded">¡Oferta agregada! 🎉</span>
+        </button>
+      </article>
+
+      <article class="offer-card logistics">
+        <h2>Envío Económico</h2>
+        <div class="truck-illustration">🚚</div>
+        <p class="big-price">Domicilio a solo <span class="price">$5.000</span></p>
+        <p class="small-copy">Rápido y confiable para compras en la cuadra.</p>
+        <button class="outline-button confirm-shipping" (click)="goToPendingOrders()">Confirmar envío</button>
+      </article>
+
+      <article class="offer-card payments">
+        <h2>Paga como quieras</h2>
+        <p class="card-copy">Aquí no te complicas: paga tranquilo en la puerta o haz una transferencia rápida.</p>
+        <div class="pay-icons">
+          <span class="pay-icon">📲</span>
+          <span class="pay-icon">💸</span>
+          <span class="pay-icon">💳</span>
+        </div>
+        <button class="hero-button gel" (click)="goToPendingOrders()">Elegir pago</button>
+      </article>
+    </aside>
+  </section>
+</div>
